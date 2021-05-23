@@ -2,13 +2,13 @@
 <resources>
     <string name="default_city">Moscow</string>
     <string name="default_coordinates">lt/ln: 55.755826, 37.617299900000035</string>
-    <string name="temperature_label">Temperature</string>
-    <string name="feels_like_label">Feels like</string>
+    <string name="temperature_label">temperature</string>
+    <string name="feels_like_label">feels like</string>
     <string name="city_coordinates">lt/ln: %s, %s</string>
     <string name="default_feels_like">+10</string>
     <string name="default_temperature">+15</string>
-    <string name="humidity_label">"humidity: "</string>
-    <string name="default_humidity">30 %</string>
-    <string name="pressure_label">pressure:</string>
+    <string name="humidity_label">"humidity, %: "</string>
+    <string name="default_humidity">30</string>
+    <string name="pressure_label">pressure, mm:</string>
     <string name="default_pressure">759 mm</string>
 </resources>
