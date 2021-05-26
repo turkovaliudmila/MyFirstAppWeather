@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyFirstAppWeather</string>
     <string name="default_city">Moscow</string>
     <string name="default_coordinates">lt/ln: 55.755826, 37.617299900000035</string>
     <string name="temperature_label">temperature</string>

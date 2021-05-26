@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="city_name_margin_top">50dp</dimen>
+    <dimen name="text_size_city_name">35sp</dimen>
+    <dimen name="city_coordinates_margin_top">5dp</dimen>
+    <dimen name="temperature_value_text_size">30sp</dimen>
+    <dimen name="margin_default">10dp</dimen>
+    <dimen name="feels_like_text_size">15sp</dimen>
+    <dimen name="humidity_text_size">15sp</dimen>
+    <dimen name="pressure_text_size">15sp</dimen>
+</resources>

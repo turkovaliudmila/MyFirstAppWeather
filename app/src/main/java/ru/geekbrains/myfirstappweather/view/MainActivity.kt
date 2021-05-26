@@ -1,14 +1,18 @@
-package ru.geekbrains.myfirstappweather
+package ru.geekbrains.myfirstappweather.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import ru.geekbrains.myfirstappweather.ui.main.MainFragment
+import ru.geekbrains.myfirstappweather.R
+import ru.geekbrains.myfirstappweather.databinding.MainActivityBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: MainActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
+        binding = MainActivityBinding.inflate(getLayoutInflater())
+        setContentView(binding.root)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, MainFragment.newInstance())
