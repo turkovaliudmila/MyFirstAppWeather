@@ -11,4 +11,6 @@
     <string name="default_humidity">30</string>
     <string name="pressure_label">pressure, mm:</string>
     <string name="default_pressure">759 mm</string>
+    <string name="error">Error</string>
+    <string name="reload">Reload</string>
 </resources>

@@ -9,15 +9,22 @@ import ru.geekbrains.myfirstappweather.model.RepositoryImpl
 class MainViewModel(private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
                     private val repository: Repository = RepositoryImpl()) : ViewModel() {
 
-    fun getLiveData() = liveDataToObserve
+    private val TIME_PAUSE: Long = 1000;
 
-    fun getWeather() = getDataAboutWeather()
+    fun getLiveData(): MutableLiveData<AppState> = liveDataToObserve
 
-    private fun getDataAboutWeather() {
+    fun getWeatherFromLocalSourceRus() = getDataFromLocalSource(true)
+
+    fun getWeatherFromLocalSourceWorld() = getDataFromLocalSource(false)
+
+    fun getWeatherFromRemoteSource() = getDataFromLocalSource(true)
+
+    private fun getDataFromLocalSource(isRussian: Boolean) {
         liveDataToObserve.value = AppState.Loading
         Thread {
-            Thread.sleep(1000)
-            liveDataToObserve.postValue(AppState.Success(repository.getWeather()))
+            Thread.sleep(this.TIME_PAUSE)
+            liveDataToObserve.postValue(AppState.Success(if (isRussian) repository.getWeatherFromLocalStorageRus() else repository.getWeatherFromLocalStorageWorld()))
         }.start()
     }
+
 }

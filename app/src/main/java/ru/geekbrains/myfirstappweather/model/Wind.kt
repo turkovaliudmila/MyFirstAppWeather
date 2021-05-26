@@ -1,6 +1,10 @@
 package ru.geekbrains.myfirstappweather.model
 
-data class Wind(val speed: Int, val direction: Direction)
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class Wind(val speed: Int, val direction: Direction) : Parcelable
 
 enum class Direction {
     NORTH,
