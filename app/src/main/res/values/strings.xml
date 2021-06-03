@@ -13,4 +13,5 @@
     <string name="default_pressure">759 mm</string>
     <string name="error">Error</string>
     <string name="reload">Reload</string>
+    <string name="condition_default">Облачно</string>
 </resources>
