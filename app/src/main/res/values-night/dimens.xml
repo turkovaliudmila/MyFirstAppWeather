@@ -8,4 +8,5 @@
     <dimen name="feels_like_text_size">15sp</dimen>
     <dimen name="humidity_text_size">15sp</dimen>
     <dimen name="pressure_text_size">15sp</dimen>
+    <dimen name="margin_15_dp">15dp</dimen>
 </resources>
