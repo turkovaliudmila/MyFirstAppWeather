@@ -14,4 +14,8 @@
     <string name="error">Error</string>
     <string name="reload">Reload</string>
     <string name="condition_default">Облачно</string>
+    <string name="dialog_message_default">Error</string>
+    <string name="OK">OK</string>
+    <string name="default_title_dialog">Message</string>
+    <string name="activity_cannot_be_null">Activity cannot be null</string>
 </resources>
