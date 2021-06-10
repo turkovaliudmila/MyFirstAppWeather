@@ -1,4 +1,6 @@
-package ru.geekbrains.myfirstappweather.model
+package ru.geekbrains.myfirstappweather.repository
+
+import ru.geekbrains.myfirstappweather.model.Weather
 
 interface Repository {
     fun getWeather(): Weather

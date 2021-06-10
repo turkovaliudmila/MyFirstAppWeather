@@ -10,8 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import ru.geekbrains.myfirstappweather.R
 import ru.geekbrains.myfirstappweather.databinding.FragmentMainBinding
-import ru.geekbrains.myfirstappweather.model.AppState
+import ru.geekbrains.myfirstappweather.viewmodel.AppState
 import ru.geekbrains.myfirstappweather.model.Weather
+import ru.geekbrains.myfirstappweather.utils.showSnackBar
 import ru.geekbrains.myfirstappweather.viewmodel.MainViewModel
 
 class MainFragment : Fragment() {
@@ -91,8 +92,4 @@ class MainFragment : Fragment() {
     companion object {
         fun newInstance() = MainFragment()
     }
-}
-
-private fun View.showSnackBar(text: String, actionText: String, action: (View) -> Unit, length: Int = Snackbar.LENGTH_INDEFINITE) {
-    Snackbar.make(this, text, length).setAction(actionText, action).show()
 }

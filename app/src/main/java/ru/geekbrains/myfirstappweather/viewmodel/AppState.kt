@@ -1,4 +1,6 @@
-package ru.geekbrains.myfirstappweather.model
+package ru.geekbrains.myfirstappweather.viewmodel
+
+import ru.geekbrains.myfirstappweather.model.Weather
 
 sealed class AppState {
     data class Success(val weatherData: List<Weather>) : AppState()
