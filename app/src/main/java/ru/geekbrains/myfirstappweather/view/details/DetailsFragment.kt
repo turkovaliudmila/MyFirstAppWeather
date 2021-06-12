@@ -1,41 +1,19 @@
-import android.app.Dialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.squareup.picasso.Picasso
 import ru.geekbrains.myfirstappweather.R
 import ru.geekbrains.myfirstappweather.databinding.FragmentDetailsBinding
-import ru.geekbrains.myfirstappweather.model.FactDTO
+import ru.geekbrains.myfirstappweather.viewmodel.AppState
 import ru.geekbrains.myfirstappweather.model.Weather
-import ru.geekbrains.myfirstappweather.model.WeatherDTO
-import ru.geekbrains.myfirstappweather.view.details.DetailsService
+import ru.geekbrains.myfirstappweather.utils.showSnackBar
+import ru.geekbrains.myfirstappweather.viewmodel.DetailsViewModel
 
-const val DETAILS_INTENT_FILTER = "DETAILS INTENT FILTER"
-const val DETAILS_LOAD_RESULT_EXTRA = "LOAD RESULT"
-const val DETAILS_INTENT_EMPTY_EXTRA = "INTENT IS EMPTY"
-const val DETAILS_DATA_EMPTY_EXTRA = "DATA IS EMPTY"
-const val DETAILS_RESPONSE_EMPTY_EXTRA = "RESPONSE IS EMPTY"
-const val DETAILS_REQUEST_ERROR_EXTRA = "REQUEST ERROR"
-const val DETAILS_REQUEST_ERROR_MESSAGE_EXTRA = "REQUEST ERROR MESSAGE"
-const val DETAILS_URL_MALFORMED_EXTRA = "URL MALFORMED"
-const val DETAILS_RESPONSE_SUCCESS_EXTRA = "RESPONSE SUCCESS"
-const val DETAILS_TEMP_EXTRA = "TEMPERATURE"
-const val DETAILS_FEELS_LIKE_EXTRA = "FEELS LIKE"
-const val DETAILS_CONDITION_EXTRA = "CONDITION"
-const val LATITUDE_EXTRA = "Latitude"
-const val LONGITUDE_EXTRA = "Longitude"
-private const val TEMP_INVALID = -100
-private const val FEELS_LIKE_INVALID = -100
-private const val PROCESS_ERROR = "Обработка ошибки"
+private const val MAIN_LINK = "https://api.weather.yandex.ru/v2/informers?"
 
 class DetailsFragment : Fragment() {
 
@@ -43,49 +21,13 @@ class DetailsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var weatherBundle: Weather
 
-    private val loadResultsReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.getStringExtra(DETAILS_LOAD_RESULT_EXTRA)) {
-                DETAILS_INTENT_EMPTY_EXTRA -> showMessage(R.string.error as String)
-                DETAILS_DATA_EMPTY_EXTRA -> showMessage(R.string.error as String)
-                DETAILS_RESPONSE_EMPTY_EXTRA -> showMessage(R.string.error as String)
-                DETAILS_REQUEST_ERROR_EXTRA -> showMessage(R.string.error as String)
-                DETAILS_REQUEST_ERROR_MESSAGE_EXTRA -> showMessage(R.string.error as String)
-                DETAILS_URL_MALFORMED_EXTRA -> showMessage(R.string.error as String)
-                DETAILS_RESPONSE_SUCCESS_EXTRA -> renderData(
-                        WeatherDTO(
-                                FactDTO(
-                                        intent.getIntExtra(
-                                                DETAILS_TEMP_EXTRA, TEMP_INVALID
-                                        ),
-                                        intent.getIntExtra(DETAILS_FEELS_LIKE_EXTRA, FEELS_LIKE_INVALID),
-                                        intent.getStringExtra(
-                                                DETAILS_CONDITION_EXTRA
-                                        ),
-                                        0,
-                                        0,
-                                        0,
-                                        "n"
-                                )
-                        )
-                )
-                else -> showMessage(R.string.error as String)
-            }
-        }
-    }
+    private val viewModel: DetailsViewModel by lazy { ViewModelProvider(this).get(DetailsViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let {
-            LocalBroadcastManager.getInstance(it)
-                    .registerReceiver(loadResultsReceiver, IntentFilter(DETAILS_INTENT_FILTER))
-        }
     }
 
     override fun onDestroy() {
-        context?.let {
-            LocalBroadcastManager.getInstance(it).unregisterReceiver(loadResultsReceiver)
-        }
         super.onDestroy()
     }
 
@@ -100,62 +42,49 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         weatherBundle = arguments?.getParcelable(BUNDLE_EXTRA) ?: Weather()
-        getWeather()
+        viewModel.detailsLiveData.observe(viewLifecycleOwner, Observer { renderData(it) })
+        viewModel.getWeatherFromRemoteSource(weatherBundle.city.lat, weatherBundle.city.lon)
     }
 
-    private fun getWeather() {
-        binding.mainView.visibility = View.GONE
-        binding.loadingLayout.visibility = View.VISIBLE
-        context?.let {
-            it.startService(Intent(it, DetailsService::class.java).apply {
-                putExtra(
-                        LATITUDE_EXTRA,
-                        weatherBundle.city.lat
-                )
-                putExtra(
-                        LONGITUDE_EXTRA,
-                        weatherBundle.city.lon
-                )
-            })
+    private fun renderData(appState: AppState) {
+        when (appState) {
+            is AppState.Success -> {
+                binding.mainView.visibility = View.VISIBLE
+                binding.loadingLayout.visibility = View.GONE
+                setWeather(appState.weatherData[0])
+            }
+            is AppState.Loading -> {
+                binding.mainView.visibility = View.GONE
+                binding.loadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Error -> {
+                binding.mainView.visibility = View.VISIBLE
+                binding.loadingLayout.visibility = View.GONE
+                binding.mainView.showSnackBar(
+                    getString(R.string.error),
+                    getString(R.string.reload),
+                    { viewModel.getWeatherFromRemoteSource(weatherBundle.city.lat, weatherBundle.city.lon) })
+            }
         }
     }
 
-    private fun renderData(weatherDTO: WeatherDTO) {
-        binding.mainView.visibility = View.VISIBLE
-        binding.loadingLayout.visibility = View.GONE
-
-        val fact = weatherDTO.fact
-        val temp = fact!!.temp
-        val feelsLike = fact.feels_like
-        val condition = fact.condition
-        if (temp == TEMP_INVALID || feelsLike == FEELS_LIKE_INVALID || condition == null) {
-            TODO(PROCESS_ERROR)
-        } else {
-            val city = weatherBundle.city
-            binding.cityName.text = city.city
-            binding.cityCoordinates.text = String.format(
-                    getString(R.string.city_coordinates),
-                    city.lat.toString(),
-                    city.lon.toString()
-            )
-            binding.temperatureValue.text = temp.toString()
-            binding.feelsLikeValue.text = feelsLike.toString()
-            binding.weatherCondition.text = condition
-        }
-    }
-
-    private fun showMessage(message: String) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.message)
-        val body = dialog.findViewById(R.id.message) as TextView
-        body.text = message
-        val yesBtn = dialog .findViewById(R.id.btnOk) as Button
-        yesBtn.setOnClickListener {
-            dialog .dismiss()
-        }
-        dialog .show()
+    private fun setWeather(weather: Weather) {
+        val city = weatherBundle.city
+        binding.cityName.text = city.city
+        binding.cityCoordinates.text = String.format(
+            getString(R.string.city_coordinates),
+            city.lat.toString(),
+            city.lon.toString()
+        )
+        binding.temperatureValue.text = weather.temperature.toString()
+        binding.feelsLikeValue.text = weather.feelsLike.toString()
+        binding.weatherCondition.text = weather.condition
+        binding.humidityValue.text = weather.humidity.toString()
+        binding.pressureValue.text = weather.pressure.toString()
+        Picasso
+            .get()
+            .load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+            .into(binding.headerIcon)
     }
 
     override fun onDestroyView() {

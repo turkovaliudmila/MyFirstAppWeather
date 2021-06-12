@@ -8,20 +8,10 @@ data class Weather(
     val city: City = getDefaultCity(),
     val temperature: Int = 0,
     val feelsLike: Int = 0,
-    val wind: Wind = Wind(0, Direction.EAST),
     val pressure: Int = 0,
     val humidity: Int = 0,
-    val condition: Condition = Condition.CLEAR
+    val condition: String = "clear"
 ) : Parcelable
-
-enum class Condition {
-    CLEAR,
-    CLOUDY,
-    RAIN,
-    SNOW,
-    HAIL,
-    THUNDERSTORM
-}
 
 fun getWorldCities(): List<Weather> {
     return listOf(
