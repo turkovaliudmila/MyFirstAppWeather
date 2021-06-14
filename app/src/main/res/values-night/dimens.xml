@@ -10,4 +10,6 @@
     <dimen name="pressure_text_size">15sp</dimen>
     <dimen name="margin_15_dp">15dp</dimen>
     <dimen name="town_header_height">100dp</dimen>
+    <dimen name="margin_5_dp">5dp</dimen>
+    <dimen name="hairline">1dp</dimen>
 </resources>

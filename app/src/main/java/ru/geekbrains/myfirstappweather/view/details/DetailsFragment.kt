@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
 import ru.geekbrains.myfirstappweather.R
 import ru.geekbrains.myfirstappweather.databinding.FragmentDetailsBinding
+import ru.geekbrains.myfirstappweather.model.City
 import ru.geekbrains.myfirstappweather.viewmodel.AppState
 import ru.geekbrains.myfirstappweather.model.Weather
 import ru.geekbrains.myfirstappweather.utils.showSnackBar
@@ -50,16 +51,16 @@ class DetailsFragment : Fragment() {
         when (appState) {
             is AppState.Success -> {
                 binding.mainView.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
                 setWeather(appState.weatherData[0])
             }
             is AppState.Loading -> {
                 binding.mainView.visibility = View.GONE
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.Error -> {
                 binding.mainView.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
+                binding.includedLoadingLayout.loadingLayout.visibility = View.GONE
                 binding.mainView.showSnackBar(
                     getString(R.string.error),
                     getString(R.string.reload),
@@ -85,6 +86,13 @@ class DetailsFragment : Fragment() {
             .get()
             .load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
             .into(binding.headerIcon)
+        saveCity(city, weather)
+    }
+
+    private fun saveCity(city: City, weather: Weather) {
+        viewModel.saveCityToDB(
+            Weather(city, weather.temperature, weather.feelsLike, weather.pressure, weather.humidity, weather.condition)
+        )
     }
 
     override fun onDestroyView() {

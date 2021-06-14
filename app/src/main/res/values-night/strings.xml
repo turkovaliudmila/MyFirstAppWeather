@@ -17,4 +17,5 @@
     <string name="dialog_message_default">Error</string>
     <string name="OK">OK</string>
     <string name="activity_cannot_be_null">Activity cannot be null</string>
+    <string name="menu_title_history">History</string>
 </resources>
