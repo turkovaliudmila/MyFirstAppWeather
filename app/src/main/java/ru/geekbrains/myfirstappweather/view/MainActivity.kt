@@ -1,7 +1,5 @@
 package ru.geekbrains.myfirstappweather.view
 
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -9,6 +7,7 @@ import android.view.MenuItem
 import ru.geekbrains.myfirstappweather.R
 import ru.geekbrains.myfirstappweather.databinding.MainActivityBinding
 import ru.geekbrains.myfirstappweather.view.contacts.ContentProviderFragment
+import ru.geekbrains.myfirstappweather.view.googlemaps.GoogleMapsFragment
 import ru.geekbrains.myfirstappweather.view.history.HistoryFragment
 import ru.geekbrains.myfirstappweather.view.main.MainFragment
 
@@ -48,6 +47,15 @@ class MainActivity : AppCompatActivity() {
                             .add(R.id.container, ContentProviderFragment.newInstance())
                             .addToBackStack("")
                             .commitAllowingStateLoss()
+                }
+                true
+            }
+            R.id.menu_google_maps -> {
+                supportFragmentManager.apply {
+                    beginTransaction()
+                        .add(R.id.container, GoogleMapsFragment())
+                        .addToBackStack("")
+                        .commitAllowingStateLoss()
                 }
                 true
             }
