@@ -53,12 +53,12 @@ class ContentProviderFragment : Fragment() {
                 //Опционально: если нужно пояснение перед запросом разрешений
                 shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) -> {
                     AlertDialog.Builder(it)
-                            .setTitle("Доступ к контактам")
-                            .setMessage("Объяснение")
-                            .setPositiveButton("Предоставить доступ") { _, _ ->
+                            .setTitle(getString(R.string.AccessToContacts))
+                            .setMessage(getString(R.string.ReasonForAccessToContacts))
+                            .setPositiveButton(getString(R.string.ButtonGrantAccess)) { _, _ ->
                                 requestPermission()
                             }
-                            .setNegativeButton("Не надо") { dialog, _ -> dialog.dismiss() }
+                            .setNegativeButton(getString(R.string.ButtonNoGrantAccess)) { dialog, _ -> dialog.dismiss() }
                             .create()
                             .show()
                 }
@@ -76,16 +76,16 @@ class ContentProviderFragment : Fragment() {
             REQUEST_CODE -> {
                 // Проверяем, дано ли пользователем разрешение по нашему запросу
                 if ((grantResults.isNotEmpty() &&
-                                grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                                grantResults.first() == PackageManager.PERMISSION_GRANTED)
                 ) {
                     getContacts()
                 } else {
                     // Поясните пользователю, что экран останется пустым, потому что доступ к контактам не предоставлен
                     context?.let {
                         AlertDialog.Builder(it)
-                                .setTitle("Доступ к контактам")
-                                .setMessage("Объяснение")
-                                .setNegativeButton("Закрыть") { dialog, _ -> dialog.dismiss() }
+                                .setTitle(getString(R.string.AccessToContacts))
+                                .setMessage(getString(R.string.EmptyScreen))
+                                .setNegativeButton(getString(R.string.ButtonClose)) { dialog, _ -> dialog.dismiss() }
                                 .create()
                                 .show()
                     }

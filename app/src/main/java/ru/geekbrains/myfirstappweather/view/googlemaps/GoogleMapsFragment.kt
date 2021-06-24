@@ -60,7 +60,7 @@ class GoogleMapsFragment : Fragment() {
                 try {
                     val addresses =
                             geoCoder.getFromLocation(location.latitude, location.longitude, 1)
-                    binding.textAddress.post { binding.textAddress.text = addresses[0].getAddressLine(0) }
+                    binding.textAddress.post { binding.textAddress.text = addresses.first().getAddressLine(0) }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
